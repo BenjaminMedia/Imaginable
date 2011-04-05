@@ -25,8 +25,11 @@ module Imaginable
       define_method column do
         uuid = self.method("#{column}_uuid").call
         token = self.method("#{column}_token").call
-        Image.new(uuid, token)
+        version = self.method("#{column}_version").call
+        Image.new(uuid, token, version)
       end
+      
+      after_initialize :update_imaginable_version
     end
     
     module ClassMethods
@@ -40,6 +43,14 @@ module Imaginable
     module InstanceMethods
       
       private
+      
+        def update_imaginable_version
+          #if new_record?
+          #  settings = self.class._imaginable_settings
+          #  column = settings[:column]
+          #  self.send(:attributes=,{"#{column}_version" => "#{UUIDTools::UUID.timestamp_create.to_i.to_s}"},false)
+          #end
+        end
       
         def validate_imagination
           settings = self.class._imaginable_settings
