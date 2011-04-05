@@ -16,6 +16,8 @@ module Imaginable
       
       ActiveSupport.on_load(:action_view) do
         require 'imaginable/form_builder'
+        require 'imaginable/helpers'
+        ::ActionView::Base.send(:include, Imaginable::Helpers)
         ::ActionView::Helpers::FormBuilder.send(:include, Imaginable::FormBuilder)
         ::ActionView::Helpers::InstanceTag.send(:include, Imaginable::InstanceTag)
       end
