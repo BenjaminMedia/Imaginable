@@ -1,8 +1,9 @@
+require 'rails'
 require 'active_support/core_ext/class/attribute'
 
 module Imaginable
   
-  require 'imaginable/railtie' if defined?(Rails)
+  require 'imaginable/railtie'
   
   # The upload-server hostname
   mattr_accessor :upload_server
