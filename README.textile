@@ -67,7 +67,7 @@ Finally we just need to add a field to our form, which let's the user upload a p
     </div>
     <div class="field">
       <%= f.label :photo %><br />
-      <%= f.image_field :photo %>
+      <%= f.image_field :photo, :format => 'square' %>
     </div>
     <div class="actions">
       <%= f.submit %>
@@ -80,8 +80,7 @@ Here is an example of what you could do, if you had a @yield(:head)@ in the @hea
 
 <pre>
   <% content_for(:head) do %>
-    <%= javascript_include_tag 'plupload.full.min' %>
-    <%= javascript_include_tag 'imaginable' %>
+    <%= imaginable_includes_tag %>
   <% end %>
 </pre>
 
@@ -110,5 +109,5 @@ The method will have the name that you have configured in your model.
 In the above examples, this would be @@article.photo@.
 
 <pre>
-  <%= image_tag @article.photo.url(:width => 500) %>
+  <%= image_tag @article.photo.url(:format => 'square', :width => 500) %>
 </pre>
