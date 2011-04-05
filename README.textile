@@ -6,6 +6,8 @@ h2. Compatibility
 
 Imaginable is currently only compatible with Rails 3
 
+Imaginable requires that you use jQuery. You can do this easily with the jquery-rails gem.
+
 h2. Installation
 
 Simply add Imaginable to your Gemfile and bundle it up:
