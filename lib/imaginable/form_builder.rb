@@ -1,3 +1,5 @@
+require 'uuidtools'
+
 module Imaginable
   module FormBuilder 
     
@@ -68,7 +70,7 @@ module Imaginable
           content_div_content = content_tag('div', :id => "#{dom_prefix}_imaginable_crop_header", :class => 'imaginable_crop_header') {"Crop Image"}
           content_div_content << content_tag('div', :id => "#{dom_prefix}_imaginable_crop_description", :class => 'imaginable_crop_description') {"Please crop your image by dragging the corners of the crop-selection."}
           if has_existing_image
-            content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => image.url(:width => 500, :height => 500))
+            content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => image.url(:format => 'none', :width => 500, :height => 500))
           else
             content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => '/images/blank.gif')
           end

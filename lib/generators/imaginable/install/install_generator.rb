@@ -15,14 +15,10 @@ module Imaginable
     source_root File.expand_path('../../../templates', __FILE__)
 
     def copy_files
-      copy_file   'imaginable.rb',                  'config/initializers/imaginable.rb'
-      copy_file   'imaginable.js',                  'public/javascripts/imaginable.js'
-      copy_file   'plupload.full.min.js',           'public/javascripts/plupload.full.min.js'
-      copy_file   'plupload.flash.swf',             'public/javascripts/plupload.flash.swf'
-      copy_file   'jquery.fancybox-1.3.4.pack.js',  'public/javascripts/jquery.fancybox-1.3.4.pack.js'
-      copy_file   'jquery.imgareaselect.pack.js',   'public/javascripts/jquery.imgareaselect.pack.js'
-      directory   'fancybox',                       'public/stylesheets/fancybox'
-      directory   'imgareaselect',                  'public/stylesheets/imgareaselect'
+      copy_file   'imaginable.rb',    'config/initializers/imaginable.rb'
+      directory   'images',           'public/images'
+      directory   'javascripts',      'public/javascripts'
+      directory   'stylesheets',      'public/stylesheets'
     end
   end
 end

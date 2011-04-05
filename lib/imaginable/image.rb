@@ -12,11 +12,11 @@ module Imaginable
     
     def url(options = {})
       options[:width] ||= 100
+      options[:format] ||= 'original'
       
       height = options.has_key?(:height) ? "-#{options[:height]}" : ""
-      format = options.has_key?(:format) ? options[:format] : "original"
       
-      "#{Imaginable.scale_server}/image/#{@uuid}-#{@version}-#{format}-#{options[:width]}#{height}.jpg"
+      "#{Imaginable.scale_server}/image/#{@uuid}-#{@version}-#{options[:format]}-#{options[:width]}#{height}.jpg"
     end
     
   end
