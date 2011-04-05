@@ -8,10 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Thomas Dippel"]
   s.email       = ["thomasdi@benjamin.dk"]
   s.homepage    = "http://rubygems.org/gems/imaginable"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
-
-  s.rubyforge_project = "imaginable"
+  s.summary     = "A gem for hooking a rails application up to the imagine image-server."
+  s.description = "A gem for hooking a rails application up to the imagine image-server."
   
   s.require_paths = ["lib"]
   
