@@ -11,7 +11,7 @@ module Imaginable
     end
     
     def url(options = {})
-      options[:width] ||= 100
+      options[:width] ||= 0
       options[:format] ||= 'original'
       
       height = options.has_key?(:height) ? "-#{options[:height]}" : ""

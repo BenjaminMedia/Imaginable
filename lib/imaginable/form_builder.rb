@@ -32,8 +32,9 @@ module Imaginable
         image = @object.method("#{method_name}").call
       end
       
-      options[:preview_width] ||= ( options[:preview_height].present? ? nil : 50 )
-      options[:preview_height] ||= ( options[:preview_width].present? ? nil : 50 )
+      options[:preview_width] ||= 0
+      options[:preview_height] ||= 0
+      
       dom_prefix = "#{@object_name}_#{@method_name}"
       tag_text = content_tag('div', :id => "#{dom_prefix}_container", :class => "imaginable",
         :'data-imaginable-prefix' => dom_prefix,
