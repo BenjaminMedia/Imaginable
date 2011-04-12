@@ -45,7 +45,7 @@ module Imaginable
           sub_tag_text = build_imaginable_crop_content(options)
         
           if has_existing_image
-            sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => image.url(:format => options[:format], :width => options[:preview_width]), :class => "imaginable_preview_image")
+            sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => image.url(:format => options[:format], :width => options[:preview_width], :height => options[:preview_height]), :class => "imaginable_preview_image")
           else
             sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => '/images/blank.gif', :style => 'display:none;', :class => "imaginable_preview_image")
           end
