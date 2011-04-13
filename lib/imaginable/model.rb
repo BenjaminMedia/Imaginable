@@ -14,8 +14,8 @@ module Imaginable
       self._imaginable_settings.update(options) if options.is_a?(Hash)
       
       define_method "has_#{column}?" do
-        uuid = self.method("#{column}_uuid").call
-        token = self.method("#{column}_token").call
+        uuid = self["#{column}_uuid"]
+        token = self["#{column}_token"]
         
         return false unless uuid && token
         
@@ -23,9 +23,9 @@ module Imaginable
       end
       
       define_method column do
-        uuid = self.method("#{column}_uuid").call
-        token = self.method("#{column}_token").call
-        version = self.method("#{column}_version").call
+        uuid = self["#{column}_uuid"]
+        token = self["#{column}_token"]
+        version = self["#{column}_version"]
         Image.new(uuid, token, version)
       end
       
