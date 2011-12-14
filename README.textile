@@ -8,6 +8,11 @@ Imaginable is currently only compatible with Rails 3
 
 Imaginable requires that you use jQuery. You can do this easily with the jquery-rails gem.
 
+h2. Dependencies
+
+Imaginable requires that you have installed and configured the Fancybox2 jQuery plugin:
+http://fancyapps.com/fancybox/
+
 h2. Installation
 
 Simply add Imaginable to your Gemfile and bundle it up:
@@ -19,7 +24,7 @@ Simply add Imaginable to your Gemfile and bundle it up:
 Then run the generator to copy some javascript and a configuration initializer into your application:
 
 <pre>
-  $ rails generate imaginable:install 
+  $ rails generate imaginable:install
 </pre>
 
 h2. Usage

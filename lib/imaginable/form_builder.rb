@@ -55,7 +55,7 @@ module Imaginable
           sub_tag_text << content_tag('div', :id => "#{dom_prefix}_file_list", :class => "imaginable_file_list") { "" }
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => '#') { "Select file" }
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_crop_button", :class => 'imaginable_crop_button',
-            :href => "##{dom_prefix}_imaginable_crop_content", :style => "display:none;") { "Crop Image" }
+            :href => "#", :style => "display:none;") { "Crop Image" }
       }
     end
 
