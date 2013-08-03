@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   
   s.add_dependency "rails", "~>3.0.0"
   s.add_dependency "uuidtools"
+  s.add_dependency "cdnconnect-api"
 end
