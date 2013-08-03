@@ -25,11 +25,15 @@ module Imaginable
       define_method column do
         uuid = self["#{column}_uuid"]
         token = self["#{column}_token"]
-        version = self["#{column}_version"]
-        Image.new(uuid, token, version)
+        Image.new(uuid, token)
       end
-      
-      after_initialize :update_imaginable_version
+
+      define_method "#{column}=" do |image|
+        raise ArgumentError, "Expected instance of Imaginable::Image." unless image.is_a?(Imaginable::Image)
+        self["#{column}_uuid"] = image.uuid
+        self["#{column}_token"] = image.token
+        image
+      end
     end
     
     module ClassMethods
@@ -43,14 +47,6 @@ module Imaginable
     module InstanceMethods
       
       private
-      
-        def update_imaginable_version
-          #if new_record?
-          #  settings = self.class._imaginable_settings
-          #  column = settings[:column]
-          #  self.send(:attributes=,{"#{column}_version" => "#{UUIDTools::UUID.timestamp_create.to_i.to_s}"},false)
-          #end
-        end
       
         def validate_imagination
           settings = self.class._imaginable_settings

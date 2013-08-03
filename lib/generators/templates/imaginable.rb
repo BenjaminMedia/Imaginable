@@ -1,6 +1,13 @@
 Imaginable.setup do |config|
-  
-  config.upload_server = 'http://127.0.0.1:3001'
-  config.scale_server = 'http://127.0.0.1:3333'
-  
+  config.app_host = ENV['CDN_CONNECT_APP_HOST']
+  config.api_key = ENV['CDN_CONNECT_API_KEY']
+
+  config.named_ratios = {
+  	:original => 0,
+  	:square   => 1.0,
+  	:tv       => 9.0/13.0,
+  	:wide     => 12.0/29.0,
+  	:portrait => 3.0/2.0,
+  	:wide169  => 9.0/16.0,
+  }
 end

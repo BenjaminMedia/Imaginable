@@ -1,17 +1,20 @@
 require 'rails'
 require 'active_support/core_ext/class/attribute'
+require 'cdnconnect_api'
 
 module Imaginable
   
   require 'imaginable/railtie'
-  
-  # The upload-server hostname
-  mattr_accessor :upload_server
-  #@@upload_server = 'http://127.0.0.1:3001'
-  
-  # The scale-server hostname
-  mattr_accessor :scale_server
-  #@@scale_server = 'http://127.0.0.1:3333'
+
+  # CDN Connect app host.
+  mattr_accessor :app_host 
+
+  # CDN Connect API key.
+  mattr_accessor :api_key
+
+  # A hash of crop ratios used in this app's design.
+  # { :name => ratio, ... }
+  mattr_accessor :named_ratios
   
   # Default way to setup Imaginable. Run rails generate imaginable:install to create
   # a fresh initializer with all configuration values.
@@ -19,4 +22,11 @@ module Imaginable
     yield self
   end
   
+  def self.upload(*args)
+    Imaginable::Image.upload(*args)
+  end
+
+  def self.cdn
+    @cdn ||= CDNConnect::APIClient.new(:app_host => self.app_host, :api_key => self.api_key)
+  end
 end
