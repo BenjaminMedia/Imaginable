@@ -1,4 +1,5 @@
 require 'imaginable/image'
+require 'imaginable/crop'
 
 module Imaginable
   

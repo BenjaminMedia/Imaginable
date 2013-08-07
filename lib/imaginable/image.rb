@@ -13,19 +13,21 @@ module Imaginable
 
     # Server-side uploading. Prefer client-side when possible!
     def self.upload(path, options = {})
-      uuid = self.generate_uuid
-      token = self.generate_token(uuid)
-      image = self.new(:uuid => uuid, :token => token)
+      image = self.new
+      image.uuid  = self.generate_uuid
+      image.token = self.generate_token(image.uuid)
       options[:destination_path] = '/'
       options[:source_file_path] = path
       options[:async] = false # TODO: Webhook support
+      ext = File.extname(path)
+      options[:destination_file_name] = "#{image.uuid}#{ext}"
       response = Imaginable.cdn.upload(options)
-      if response.files.any? && response.files.first['upload_success']
+      if response.files && response.files.any? && response.files.first['upload_success']
         # TODO: Can we find the image dimensions from the response?
         image.save!
         return image
       else
-        if response.files.any?
+        if response.files && response.files.any?
           message = response.files.first['msgs'].map{|msg| msg['text']}.join("\n")
         else
           message = response.msgs.join("\n")
@@ -42,7 +44,7 @@ module Imaginable
       
       opts = [crop_string, scale_string, quality_string].compact.join('&')
       urlopts = opts.empty? ? "" : "?#{opts}"
-      "http://#{Imaginable.app_host}/#{@uuid}.#{format}#{urlopts}"
+      "http://#{Imaginable.app_host}/#{self.uuid}.#{format}#{urlopts}"
     end
 
     private
@@ -85,7 +87,7 @@ module Imaginable
           crop_info.w ||= 100.0
           x0, y0, x1 = crop_info.x, crop_info.y, crop_info.x + crop_info.w
           y1 = crop_info.y + crop_info.w * named_ratio
-          crop_string = "crop=#{x0.to_i}px,#{y0.to_i},#{x1.to_i},#{y1.to_i}&mode=max"
+          crop_string = "crop=#{x0.to_i}px,#{y0.to_i}px,#{x1.to_i}px,#{y1.to_i}px&mode=max"
         end
       end
       crop_string
