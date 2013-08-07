@@ -27,16 +27,7 @@ module Imaginable
       directory   'javascripts',      'public/javascripts'
       directory   'stylesheets',      'public/stylesheets'
 
-      rails_version = Rails.version.split('.').map(&:to_i)
-      if rails_version[0] == 4
-        copy_file   'imaginable_crop_rails4.rb', 'app/models/imaginable_crop.rb'
-      elsif rails_version[0] == 3
-        copy_file   'imaginable_crop_rails3.rb', 'app/models/imaginable_crop.rb'
-      elsif rails_version[0] == 2
-        copy_file   'imaginable_crop_rails2.rb', 'app/models/imaginable_crop.rb'
-      else
-        raise "Unsupported Rails version: #{Rails.version}"
-      end
+      migration_template 'create_imaginable_images.rb', 'db/migrate/create_imaginable_images.rb'
       migration_template 'create_imaginable_crops.rb', 'db/migrate/create_imaginable_crops.rb'
     end
   end

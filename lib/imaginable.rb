@@ -12,9 +12,15 @@ module Imaginable
   # CDN Connect API key.
   mattr_accessor :api_key
 
-  # A hash of crop ratios used in this app's design.
+  # A hash of crop ratios used in this app's design, specified as height/width.
   # { :name => ratio, ... }
   mattr_accessor :named_ratios
+
+  # The default format for cropped/scaled images.
+  mattr_accessor :default_format
+
+  # The default JPEG quality
+  mattr_accessor :default_jpeg_quality
   
   # Default way to setup Imaginable. Run rails generate imaginable:install to create
   # a fresh initializer with all configuration values.
