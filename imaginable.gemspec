@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   
   s.add_dependency "rails"
   s.add_dependency "uuidtools"
-  s.add_dependency "cdnconnect-api"
+  s.add_dependency "cdnconnect-api", ">= 0.2.4"
 end
