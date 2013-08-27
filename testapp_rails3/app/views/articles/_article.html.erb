@@ -1,0 +1,6 @@
+<%= form_for @article, :article do |f| %>
+<p><%= f.image_field :photo %></p>
+<p><%= f.label :title %><%= f.text_field :title %></p>
+<p><%= f.label :body %><br /><%= f.text_area :body %></p>
+<p><%= f.submit %></p>
+<% end %>
