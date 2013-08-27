@@ -35,4 +35,8 @@ module Imaginable
   def self.cdn
     @cdn ||= CDNConnect::APIClient.new(:app_host => self.app_host, :api_key => self.api_key)
   end
+
+  def self.generate_upload_url
+    cdn.get_upload_url('/').results['upload_url']
+  end
 end

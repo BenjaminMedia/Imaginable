@@ -21,7 +21,8 @@ module Imaginable
         ::ActionView::Helpers::FormBuilder.send(:include, Imaginable::FormBuilder)
         ::ActionView::Helpers::InstanceTag.send(:include, Imaginable::InstanceTag)
       end
-      
+
+      require 'imaginable/routes'
     end
     
   end

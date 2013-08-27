@@ -8,10 +8,24 @@ module Imaginable
     end
 
     def image_field(method, options = {})
-      tag_text = hidden_field("#{method}_uuid")
-      tag_text << hidden_field("#{method}_token")
-      tag_text << hidden_field("#{method}_version")
-      tag_text << ActionView::Helpers::InstanceTag.new(@object_name, method, self, @object).to_image_field_tag(options)
+      has_existing_image = @object.method("has_#{method}?").call
+      if has_existing_image
+        image = @object.method(method).call
+      else
+        image = Imaginable::Image.new
+        image.uuid = Imaginable::Image.generate_uuid
+        image.token = Imaginable::Image.generate_token(image.uuid)
+        @object.send("#{method}=", image)
+      end
+
+      ActionView::Helpers::InstanceTag.new(@object_name, method, self, @object).to_image_field_tag(options) do |tag|
+        self.fields_for method do |f|
+          tag << f.hidden_field(:uuid,   :value => image.uuid)
+          tag << f.hidden_field(:token,  :value => image.token)
+          tag << f.hidden_field(:width,  :value => image.width)
+          tag << f.hidden_field(:height, :value => image.height)
+        end
+      end
     end
 
     module ClassMethods
@@ -27,10 +41,8 @@ module Imaginable
     end
 
     def to_image_field_tag(options = {})
-      has_existing_image = @object.method("has_#{method_name}?").call
-      if has_existing_image
-        image = @object.method("#{method_name}").call
-      end
+      image = @object.send(method_name)
+      has_existing_image = !image.new_record?
 
       options[:preview_width] ||= 0
       options[:preview_height] ||= 0
@@ -38,16 +50,16 @@ module Imaginable
       dom_prefix = "#{@object_name}_#{@method_name}"
       tag_text = content_tag('div', :id => "#{dom_prefix}_container", :class => "imaginable",
         :'data-imaginable-prefix' => dom_prefix,
-        :'data-imaginable-upload-server' => Imaginable.upload_server,
-        :'data-imaginable-scale-server' => Imaginable.scale_server,
+        :'data-imaginable-app-host' => Imaginable.app_host,
+        :'data-imaginable-upload-url' => Imaginable.generate_upload_url,
         :'data-imaginable-preview-width' => options[:preview_width],
         :'data-imaginable-force-crop' => options[:force_crop],
-        :'data-imaginable-format' => options[:format],
-        :'data-imaginable-new-version' => "'#{UUIDTools::UUID.timestamp_create.to_i.to_s}'") {
+        :'data-imaginable-crop' => options[:crop],
+        :'data-imaginable-crop-ratio' => (Imaginable.named_ratios[options[:crop]] || 0)) {
           sub_tag_text = build_imaginable_crop_content(options)
 
           if has_existing_image
-            sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => image.url(:format => options[:format], :width => options[:preview_width], :height => options[:preview_height]), :class => "imaginable_preview_image")
+            sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => image.url(:crop => options[:crop], :width => options[:preview_width], :height => options[:preview_height]), :class => "imaginable_preview_image")
           else
             sub_tag_text << tag('img', :id => "#{dom_prefix}_preview_image", :src => '/images/blank.gif', :style => 'display:none;', :class => "imaginable_preview_image")
           end
@@ -56,6 +68,8 @@ module Imaginable
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => '#') { "Select file" }
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_crop_button", :class => 'imaginable_crop_button',
             :href => "#", :style => "display:none;") { "Crop Image" }
+          yield sub_tag_text if block_given?
+          sub_tag_text
       }
     end
 
@@ -72,7 +86,7 @@ module Imaginable
           content_div_content = content_tag('div', :id => "#{dom_prefix}_imaginable_crop_header", :class => 'imaginable_crop_header') {"Crop Image"}
           content_div_content << content_tag('div', :id => "#{dom_prefix}_imaginable_crop_description", :class => 'imaginable_crop_description') {"Please crop your image by dragging the corners of the crop-selection."}
           if has_existing_image
-            content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => image.url(:format => 'none', :width => 500, :height => 500))
+            content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => image.url(:crop => 'none', :width => 500, :height => 500))
           else
             content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => '/images/blank.gif')
           end

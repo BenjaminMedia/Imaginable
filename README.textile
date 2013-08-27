@@ -104,7 +104,7 @@ If you require the user to upload an image, you can use this handy validation he
 
     validates_presence_of :title
     validates_presence_of :body
-    validates_imagination
+    validates_imagination :photo
 
   end
 </pre>

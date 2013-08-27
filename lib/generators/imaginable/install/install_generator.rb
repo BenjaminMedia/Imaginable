@@ -26,6 +26,7 @@ module Imaginable
       directory   'images',           'public/images'
       directory   'javascripts',      'public/javascripts'
       directory   'stylesheets',      'public/stylesheets'
+      directory   'controllers',      'app/controllers/imaginable'
 
       migration_template 'create_imaginable_images.rb', 'db/migrate/create_imaginable_images.rb'
       migration_template 'create_imaginable_crops.rb', 'db/migrate/create_imaginable_crops.rb'
