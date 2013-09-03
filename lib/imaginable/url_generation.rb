@@ -58,7 +58,7 @@ module Imaginable
           crop_string = "crop=#{x0.to_i}px,#{y0.to_i}px,#{x1.to_i}px,#{y1.to_i}px&mode=max"
         end
       elsif crop == :none
-        return nil
+        return "mode=max"
       elsif crop
         raise "Undefined crop type #{crop.inspect}."
       end

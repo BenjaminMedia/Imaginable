@@ -27,7 +27,7 @@
       preview_width:       main_elem.data('imaginable-preview-width')    || 250,
       enable_cropping:     main_elem.data('imaginable-enable-cropping')  || true,
       force_crop:          main_elem.data('imaginable-force-crop')       || false,
-      crop:                main_elem.data('imaginable-crop')             || 'none',
+      crop:                main_elem.data('imaginable-crop')             || 'original',
       cropRatio:           parseFloat(main_elem.data('imaginable-crop-ratio') || '0'),
 
       force_crop:          main_elem.data('imaginable-force-crop')       || false,
@@ -48,7 +48,7 @@
     var obj = this;
 
     // INSTANCE VARIABLES - Shared
-    var existing_image = false;
+    var existing_image = main_elem.data('imaginable-has-image') !== 'false';
     var image_version;
 
     // INSTANCE VARIABLES - Uploader
@@ -125,7 +125,7 @@
              onSelectEnd: onAreaSelectorSelectEnd
           });
 
-          if (settings.crop != 'original' && settings.crop != 'none')
+          if (settings.crop != 'none')
             cropper.setOptions({cropRatio: settings.cropRatio});
 
           cropper.setSelection(crop_points['x1'],crop_points['y1'],crop_points['x2'],crop_points['y2'],false);
@@ -133,10 +133,8 @@
           cropper.update();
         },
         afterClose: function() {
-          var img_elm = $('.fancybox-wrap .imaginable_crop_image');
-          img_elm.imgAreaSelect({
-            remove: true
-          });
+          cropper.setOptions({ hide: true });
+          cropper.update();
         }
       });
     };
@@ -152,7 +150,7 @@
       crop_data['x'] = x
       crop_data['y'] = y
       crop_data['w'] = width;
-      var data = {_method: 'PUT', image: image_data, callback: '?', token: current_image_token};
+      var data = {_method: 'PUT', crop: crop_data, callback: '?', token: current_image_token};
 
       var url = '/imaginable/images/' + current_image_uuid + '/crops/' + name;
 
@@ -206,8 +204,8 @@
 
     var initializeButtons = function() {
       // Cropper
-      $('.imaginable_save_crop_button').on('click', onSaveCropButtonClick);
-      $('.imaginable_cancel_crop_button').on('click', onCancelCropButtonClick);
+      $(document).on('click', '.imaginable_save_crop_button', onSaveCropButtonClick);
+      $(document).on('click', '.imaginable_cancel_crop_button', onCancelCropButtonClick);
     };
 
     var initializeUploader = function() {
@@ -242,6 +240,10 @@
 
     var initializeCropper = function() {
       main_elem.find('.imaginable_crop_button').first().bind('click', onCropperElemClick);
+
+      if (existing_image) {
+        downloadImageMetadata();
+      }
     };
 
     var onCropperElemClick = function(event) {
@@ -260,7 +262,7 @@
 
       current_crop_points = {x1: 0, x2: current_image_width, y1: 0, y2: current_image_height, width: current_image_width, height: current_image_height};
 
-      if (settings.format != 'original' && settings.format != 'none') {
+      if (settings.format != 'none') {
         var numeric_crop_ratio = settings.cropRatio;
         if (numeric_crop_ratio > 1) {
           // Width > Height
@@ -288,7 +290,9 @@
     };
 
     var numericAspectRatio = function() {
-      if (settings.crop != 'original' && settings.crop != 'none') {
+      if (settings.crop == 'original') {
+        return current_image_height / current_image_width;
+      } else if (settings.crop != 'none') {
         return settings.cropRatio;
       } else {
         return 0;
@@ -306,11 +310,6 @@
       height_field.trigger('change');
     };
 
-    var downloadImageMetadata = function() {
-      var url = '/imaginable/images/' + current_image_uuid + '.json?token=' + current_image_token + 'callback=?';
-      $.getJSON(url, onDownloadImageMetadataComplete);
-    };
-
     var onDownloadImageMetadataComplete = function(data) {
       current_image_width = data.image.width;
       current_image_height = data.image.height;
@@ -318,28 +317,29 @@
       // Make sure that crop points are initialized
       getCropPoints();
 
-      var crop_i;
-      var crop;
-      for (crop_i in data.image.crops) {
-        if (crop_i.name == settings.crop) {
-          crop = crop_i;
-          break;
+      var crop = undefined;
+      $.each(data.image.crops, function(i, c) {
+        if (c.crop == settings.crop) {
+          crop = c;
+          return;
         }
-      }
+      });
+
+      var numeric_crop_ratio = settings.format != 'none' ? numericAspectRatio() : current_image_width / current_image_height;
 
       if (crop) {
         current_crop_points = {
           x1: crop.x,
           y1: crop.y,
           x2: crop.x + crop.w,
-          y2: Math.round(crop.y + (crop.w * settings.cropRatio))
+          y2: Math.round(crop.y + (crop.w * numeric_crop_ratio))
         };
       } else {
         var width = data.image.width;
-        var height = Math.round(width * settings.cropRatio);
+        var height = Math.round(width * numeric_crop_ratio);
         if (height > data.image.height) {
           height = data.image.height;
-          width = Math.round(height / settings.cropRatio);
+          width = Math.round(height / numeric_crop_ratio);
         }
         current_crop_points = {
           x1: 0,
@@ -349,12 +349,12 @@
         };
       }
 
-      var numeric_crop_ratio = settings.format != 'original' ? numericAspectRatio() : current_image_width / current_image_height
-
-      current_crop_points.height = Math.round(parseFloat(current_crop_points.width) / numeric_crop_ratio);
-      current_crop_points.y2 = current_crop_points.y1 + current_crop_points.height;
-
       showCropButton();
+    };
+
+    var downloadImageMetadata = function() {
+      var url = '/imaginable/images/' + current_image_uuid + '.json?token=' + current_image_token + '&callback=?';
+      $.getJSON(url, onDownloadImageMetadataComplete);
     };
 
     var onUploaderFilesAdded = function(up, files) {
@@ -404,7 +404,6 @@
     };
 
     var onUploaderUploadComplete = function(up, files) {
-
       writeToFormFields();
       obj.refreshPreviewImage();
       obj.refreshCroppingPreviewImage();

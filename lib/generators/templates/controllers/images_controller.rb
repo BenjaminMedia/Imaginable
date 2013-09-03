@@ -4,8 +4,7 @@ class Imaginable::ImagesController < ApplicationController
 
 	def show
 		respond_to { |format|
-			format.json { respond_with @image, :include => :crops }
-			format.jpg  { redirect_to @image.url }
+			format.json { respond_with @image, :include => :crops, :callback => params[:callback] }
 		}
 	end
 

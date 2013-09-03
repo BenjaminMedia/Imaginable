@@ -57,6 +57,7 @@ module Imaginable
         :'data-imaginable-preview-width' => options[:preview_width],
         :'data-imaginable-force-crop' => options[:force_crop],
         :'data-imaginable-crop' => options[:crop],
+        :'data-imaginable-has-image' => has_existing_image,
         :'data-imaginable-crop-ratio' => (Imaginable.named_ratios[options[:crop]] || 0)) {
           sub_tag_text = build_imaginable_crop_content(options)
 
@@ -67,9 +68,9 @@ module Imaginable
           end
 
           sub_tag_text << content_tag('div', :id => "#{dom_prefix}_file_list", :class => "imaginable_file_list") { "" }
-          sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => 'javascript:return false;') { "Select file" }
+          sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => '#') { "Select file" }
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_crop_button", :class => 'imaginable_crop_button',
-            :href => "javascript:return false;", :style => "display:none;") { "Crop Image" }
+            :href => "#", :style => "display:none;") { "Crop Image" }
           yield sub_tag_text if block_given?
           sub_tag_text
       }
@@ -93,8 +94,8 @@ module Imaginable
             content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => '/images/blank.gif')
           end
           content_div_content << content_tag('div', :id => "#{dom_prefix}_imageinable_crop_buttons", :class => 'imaginable_crop_buttons') {
-            buttons_div_tag = content_tag('a', :id => "#{dom_prefix}_imaginable_cancel_crop_button", :class => 'imaginable_cancel_crop_button', :href => 'javascript:return false;') {"Cancel"}
-            buttons_div_tag << content_tag('a', :id => "#{dom_prefix}_imaginable_save_crop_button", :class => 'imaginable_save_crop_button', :href => 'javascript:returnfalse;') {"Save"}
+            buttons_div_tag = content_tag('a', :id => "#{dom_prefix}_imaginable_cancel_crop_button", :class => 'imaginable_cancel_crop_button', :href => '#') {"Cancel"}
+            buttons_div_tag << content_tag('a', :id => "#{dom_prefix}_imaginable_save_crop_button", :class => 'imaginable_save_crop_button', :href => '#') {"Save"}
           }
         }
       }
