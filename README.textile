@@ -1,12 +1,12 @@
 h1. Imaginable
 
-Imaginable is a gem for Rails, which allows easy integration with the Imagination image-upload and scaling server.
+Imaginable is a gem for Rails, which allows your apps to store and view images with the CDN Connect cloud-based content delivery network.
 
 h2. Compatibility
 
-Imaginable is currently only compatible with Rails 3
+Imaginable is currently only compatible with Rails 3 and 4.
 
-Imaginable requires that you use jQuery. You can do this easily with the jquery-rails gem.
+Imaginable requires that you use jQuery. You can do this easily with the jquery-rails gem, if your version of Rails doesn't already use jQuery by default.
 
 h2. Dependencies
 
@@ -21,10 +21,20 @@ Simply add Imaginable to your Gemfile and bundle it up:
   gem 'imaginable'
 </pre>
 
-Then run the generator to copy some javascript and a configuration initializer into your application:
+Then run the generator:
 
 <pre>
   $ rails generate imaginable:install
+</pre>
+
+The generator will install JavaScripts, stylesheets, as well as two controllers needed for AJAX uploading/cropping of images.
+
+Configure Imaginable in config/initializers/imaginable.rb, and set any named aspect ratios (like square, widescreen, etc.) if you need them. These are handy when fitting user-uploaded images into a standardized layout.
+
+In addition, you will have to add the following to your routes.rb:
+
+<pre>
+  imaginable_routes
 </pre>
 
 h2. Usage
@@ -74,7 +84,7 @@ Finally we just need to add a field to our form, which let's the user upload a p
     </div>
     <div class="field">
       <%= f.label :photo %><br />
-      <%= f.image_field :photo, :format => 'square' %>
+      <%= f.image_field :photo, :crop => :square %>
     </div>
     <div class="actions">
       <%= f.submit %>
@@ -116,5 +126,5 @@ The method will have the name that you have configured in your model.
 In the above examples, this would be @@article.photo@.
 
 <pre>
-  <%= image_tag @article.photo.url(:format => 'square', :width => 500) %>
+  <%= image_tag @article.photo.url(:crop => 'square', :width => 500) %>
 </pre>
