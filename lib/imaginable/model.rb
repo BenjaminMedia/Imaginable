@@ -6,9 +6,19 @@ module Imaginable
     def has_imagination(column, options = {})
       extend ClassMethods
       belongs_to column, :class_name => 'Imaginable::Image'
+      attr_accessible "#{column}_id".intern
 
       define_method "has_#{column}?" do
         !self.send("#{column}_id").nil?
+      end
+
+      define_method "#{column}_attributes=" do |attributes|
+        img = self.send(column) || Imaginable::Image.new do |i|
+          i.uuid = attributes[:uuid]
+        end
+        raise "Mismatched image token (probable request forgery)." unless img.authorize_token?(attributes[:token])
+        img.update_attributes(attributes)
+        self.send("#{column}=", img)
       end
     end
     

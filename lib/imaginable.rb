@@ -21,6 +21,9 @@ module Imaginable
 
   # The default JPEG quality
   mattr_accessor :default_jpeg_quality
+
+  # The secret app token salt.
+  mattr_accessor :secret
   
   # Default way to setup Imaginable. Run rails generate imaginable:install to create
   # a fresh initializer with all configuration values.
@@ -34,9 +37,5 @@ module Imaginable
 
   def self.cdn
     @cdn ||= CDNConnect::APIClient.new(:app_host => self.app_host, :api_key => self.api_key)
-  end
-
-  def self.generate_upload_url
-    cdn.get_upload_url('/').results['upload_url']
   end
 end

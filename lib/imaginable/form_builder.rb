@@ -13,13 +13,11 @@ module Imaginable
         image = @object.method(method).call
       else
         image = Imaginable::Image.new
-        image.uuid = Imaginable::Image.generate_uuid
-        image.token = Imaginable::Image.generate_token(image.uuid)
         @object.send("#{method}=", image)
       end
 
       ActionView::Helpers::InstanceTag.new(@object_name, method, self, @object).to_image_field_tag(options) do |tag|
-        self.fields_for method do |f|
+        self.fields_for method, @object do |f|
           tag << f.hidden_field(:uuid,   :value => image.uuid)
           tag << f.hidden_field(:token,  :value => image.token)
           tag << f.hidden_field(:width,  :value => image.width)
@@ -35,6 +33,7 @@ module Imaginable
   end
 
   module InstanceTag
+    include Rails.application.routes.url_helpers
 
     def self.included(base)
       base.extend(ClassMethods)
@@ -47,11 +46,14 @@ module Imaginable
       options[:preview_width] ||= 0
       options[:preview_height] ||= 0
 
-      dom_prefix = "#{@object_name}_#{@method_name}"
+      ### XXX: Hard-coded, because URL helpers aren't easily available here.
+      upload_url = "/imaginable/images/#{image.uuid}"
+
+      dom_prefix = "#{@object_name}_#{@method_name}_attributes"
       tag_text = content_tag('div', :id => "#{dom_prefix}_container", :class => "imaginable",
         :'data-imaginable-prefix' => dom_prefix,
         :'data-imaginable-app-host' => Imaginable.app_host,
-        :'data-imaginable-upload-url' => Imaginable.generate_upload_url,
+        :'data-imaginable-upload-url' => upload_url,
         :'data-imaginable-preview-width' => options[:preview_width],
         :'data-imaginable-force-crop' => options[:force_crop],
         :'data-imaginable-crop' => options[:crop],
@@ -65,9 +67,9 @@ module Imaginable
           end
 
           sub_tag_text << content_tag('div', :id => "#{dom_prefix}_file_list", :class => "imaginable_file_list") { "" }
-          sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => '#') { "Select file" }
+          sub_tag_text << content_tag('a', :id => "#{dom_prefix}_browse_button", :class => 'imaginable_browse_files_button', :href => 'javascript:return false;') { "Select file" }
           sub_tag_text << content_tag('a', :id => "#{dom_prefix}_crop_button", :class => 'imaginable_crop_button',
-            :href => "#", :style => "display:none;") { "Crop Image" }
+            :href => "javascript:return false;", :style => "display:none;") { "Crop Image" }
           yield sub_tag_text if block_given?
           sub_tag_text
       }
@@ -91,8 +93,8 @@ module Imaginable
             content_div_content << tag('img', :id => "#{dom_prefix}_imaginable_crop_image", :class => 'imaginable_crop_image', :src => '/images/blank.gif')
           end
           content_div_content << content_tag('div', :id => "#{dom_prefix}_imageinable_crop_buttons", :class => 'imaginable_crop_buttons') {
-            buttons_div_tag = content_tag('a', :id => "#{dom_prefix}_imaginable_cancel_crop_button", :class => 'imaginable_cancel_crop_button', :href => '#') {"Cancel"}
-            buttons_div_tag << content_tag('a', :id => "#{dom_prefix}_imaginable_save_crop_button", :class => 'imaginable_save_crop_button', :href => '#') {"Save"}
+            buttons_div_tag = content_tag('a', :id => "#{dom_prefix}_imaginable_cancel_crop_button", :class => 'imaginable_cancel_crop_button', :href => 'javascript:return false;') {"Cancel"}
+            buttons_div_tag << content_tag('a', :id => "#{dom_prefix}_imaginable_save_crop_button", :class => 'imaginable_save_crop_button', :href => 'javascript:returnfalse;') {"Save"}
           }
         }
       }
