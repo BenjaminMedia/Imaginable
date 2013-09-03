@@ -5,6 +5,8 @@ Imaginable.setup do |config|
   config.default_format       = :jpg
   config.default_jpeg_quality = 85
 
+  config.secret = '123'
+
   # name => height/width
   # Example: { :widescreen => 9.0/16.0 }
   config.named_ratios = {

@@ -2,6 +2,8 @@ Imaginable.setup do |config|
   config.app_host = ENV['CDN_CONNECT_APP_HOST']
   config.api_key  = ENV['CDN_CONNECT_API_KEY']
 
+  config.secret = ENV['IMAGINABLE_SECRET'] or raise "Please set an Imaginable secret in config/initializers/imaginable.rb, or with the environment variable IMAGINABLE_SECRET."
+
   config.default_format       = :jpg
   config.default_jpeg_quality = 85
 
