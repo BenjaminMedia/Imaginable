@@ -74,7 +74,9 @@
        format = typeof format !== 'undefined' ? format : 'jpg';
        var host = this.hostForUUID(uuid);
        var url = "http://" + host + "/" + uuid + "." + format;
-       return url;
+       var crop_string = "crop=" + current_crop_points.x1 + "px," + current_crop_points.y1 + "px," + current_crop_points.x2 + "px," + current_crop_points.y2 + "px";
+       var scale_string = "width=" + width + "&" + "height=" + height + "&mode=max";
+       return url + "?" + crop_string + "&" + scale_string;
     }
 
     this.originalImageURI = function(uuid, width, height, format) {
