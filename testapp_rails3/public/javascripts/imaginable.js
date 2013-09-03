@@ -70,17 +70,17 @@
     }
 
     this.croppedImageURI = function(uuid, width, height, format) {
-       height = typeof height !== 'undefined' ? height : 0;
+       height = typeof height !== 'undefined' ? height : settings.preview_width;
        format = typeof format !== 'undefined' ? format : 'jpg';
        var host = this.hostForUUID(uuid);
        var url = "http://" + host + "/" + uuid + "." + format;
-       var crop_string = "crop=" + current_crop_points.x1 + "px," + current_crop_points.y1 + "px," + current_crop_points.x2 + "px," + current_crop_points.y2 + "px";
-       var scale_string = "width=" + width + "&" + "height=" + height + "&mode=max";
+       var crop_string = "crop=" + Math.round(current_crop_points.x1) + "px," + Math.round(current_crop_points.y1) + "px," + Math.round(current_crop_points.x2) + "px," + Math.round(current_crop_points.y2) + "px";
+       var scale_string = "width=" + Math.round(width) + "&" + "height=" + Math.round(height) + "&mode=max";
        return url + "?" + crop_string + "&" + scale_string;
     }
 
     this.originalImageURI = function(uuid, width, height, format) {
-      height = typeof height !== 'undefined' ? height : 0;
+      height = typeof height !== 'undefined' ? height : settings.preview_width;
       format = typeof format !== 'undefined' ? format : 'jpg';
       var host = this.hostForUUID(uuid);
       var url = "http://" + host + "/" + uuid + "." + format;
@@ -126,9 +126,6 @@
              imageWidth: current_image_width,
              onSelectEnd: onAreaSelectorSelectEnd
           });
-
-          if (settings.crop != 'none')
-            cropper.setOptions({cropRatio: settings.cropRatio});
 
           cropper.setSelection(crop_points['x1'],crop_points['y1'],crop_points['x2'],crop_points['y2'],false);
           cropper.setOptions({ show: true });
@@ -425,6 +422,16 @@
 
     var onAreaSelectorSelectEnd = function(img, selection) {
       selection = cropper.getSelection(false);
+
+      if (settings.crop != 'none') {
+        // Enforce aspect ratio
+        // (Cannot use aspectRatio option of imgAreaSelect, because it only support "w:h" options, and we just have a number.)
+        var new_height = settings.cropRatio * selection['width'];
+        selection['height'] = new_height;
+        selection['y2'] = selection['y1'] + new_height;
+        cropper.setSelection(selection['x1'], selection['y1'], selection['x2'], selection['y2'], false);
+        cropper.update();
+      }
 
       current_crop_points['x1'] = selection['x1'];
       current_crop_points['y1'] = selection['y1'];

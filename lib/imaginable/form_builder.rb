@@ -43,8 +43,7 @@ module Imaginable
       image = @object.send(method_name)
       has_existing_image = !image.new_record?
 
-      options[:preview_width] ||= 0
-      options[:preview_height] ||= 0
+      options[:preview_width] ||= 500
 
       ### XXX: Hard-coded, because URL helpers aren't easily available here.
       upload_url = "/imaginable/images/#{image.uuid}"
