@@ -32,7 +32,7 @@
 
       force_crop:          main_elem.data('imaginable-force-crop')       || false,
 
-      runtimes:            'flash',
+      runtimes:            'html5,flash,silverlight',
       max_file_size:       '10mb',
       file_data_name:      'image_file',
       multipart:           true,
@@ -211,9 +211,9 @@
     };
 
     var initializeUploader = function() {
-      var cdn_options = {
-        destination_file_name: (current_image_uuid + ".jpg"),
-        queue_processing: "false"
+      var multipart_options = {
+        _method: 'PUT',
+        token: current_image_token
       };
 
       uploader = new plupload.Uploader({
@@ -224,7 +224,7 @@
         url:                  settings['uploadUrl'],
         file_data_name:       'file',
         multipart:            settings['multipart'],
-        multipart_params:     cdn_options,
+        multipart_params:     multipart_options,
         flash_swf_url:        settings['flash_swf_url'],
         silverlight_xap_url:  settings['silverlight_xap_url'],
         filters:              settings['filters']
@@ -394,9 +394,9 @@
 
     var onUploaderFileUploaded = function(up, file, response) {
      $('#' + file.id + " b").html("Done");
-   	 responseData = jQuery.parseJSON(response.response);
+   	 var responseData = jQuery.parseJSON(response.response);
    	 current_image_uuid = responseData.image.uuid;
-   	 current_image_token = responseData.token;
+   	 current_image_token = responseData.image.token;
    	 current_image_width = responseData.image.width;
    	 current_image_height = responseData.image.height;
    	 resetCropPoints();
