@@ -48,7 +48,11 @@ module Imaginable
       ### XXX: Hard-coded, because URL helpers aren't easily available here.
       upload_url = "/imaginable/images/#{image.uuid}"
 
-      dom_prefix = "#{@object_name}_#{@method_name}_attributes"
+      # XXX: This is a hack to accommodate acts_as_heir_of, which doesn't integrate well
+      # with nested associations.
+      dom_prefix_suffix = options[:attributes_hack] ? '' : '_attributes'
+
+      dom_prefix = "#{@object_name}_#{@method_name}#{dom_prefix_suffix}"
       tag_text = content_tag('div', :id => "#{dom_prefix}_container", :class => "imaginable",
         :'data-imaginable-prefix' => dom_prefix,
         :'data-imaginable-app-host' => Imaginable.app_host,

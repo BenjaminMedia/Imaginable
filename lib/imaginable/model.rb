@@ -6,6 +6,7 @@ module Imaginable
     def has_imagination(column, options = {})
       extend ClassMethods
       belongs_to column, :class_name => 'Imaginable::Image'
+      accepts_nested_attributes_for column
       attr_accessible "#{column}_attributes"
 
       define_method "has_#{column}?" do
@@ -19,6 +20,16 @@ module Imaginable
         raise "Mismatched image token (probable request forgery)." unless img.authorize_token?(attributes[:token])
         img.update_attributes(attributes)
         self.send("#{column}=", img)
+      end
+
+      alias_method "imaginable_assoc_#{column}=", "#{column}="
+
+      define_method "#{column}=" do |value|
+        if value.is_a?(ActiveSupport::HashWithIndifferentAccess)
+          self.send("#{column}_attributes=", value)
+        else
+          self.send("imaginable_assoc_#{column}=", value)
+        end
       end
     end
     
