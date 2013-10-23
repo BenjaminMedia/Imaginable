@@ -10,7 +10,7 @@ module Imaginable
       quality_string = "q=#{options[:q] || Imaginable.default_jpeg_quality}" if format == :jpg
       crop_string    = get_crop_string(options)
       scale_string   = get_scale_string(options)
-      
+
       opts = [crop_string, scale_string, quality_string].compact.join('&')
       urlopts = opts.empty? ? "" : "?#{opts}"
       "http://#{self.host}/#{self.uuid}.#{format}#{urlopts}"
@@ -41,7 +41,7 @@ module Imaginable
         y0 = crop[:y0] || 0
         x1 = crop[:x1] || 100
         y1 = crop[:y1] || 100
-        mode = crop[:mode] || 'max'
+        mode = crop[:mode] || 'crop'
         crop_string = "crop=#{x0},#{y0},#{x1},#{y1}&mode=#{mode}"
       elsif crop.is_a?(Symbol) && crop != :none
         named_ratio = Imaginable.named_ratios[crop]
