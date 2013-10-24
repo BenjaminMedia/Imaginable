@@ -41,7 +41,7 @@ module Imaginable
         y0 = crop[:y0] || 0
         x1 = crop[:x1] || 100
         y1 = crop[:y1] || 100
-        mode = crop[:mode] || 'crop'
+        mode = crop[:mode] || 'max'
         crop_string = "crop=#{x0},#{y0},#{x1},#{y1}&mode=#{mode}"
       elsif crop.is_a?(Symbol) && crop != :none
         named_ratio = Imaginable.named_ratios[crop]
